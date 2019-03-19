@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 const express = require('express');
 const routes = express.Router();
 const db = require('./data/db');
@@ -81,11 +83,50 @@ routes.post(postUrl, async (req, res) => {
       });
     }
   } else {
-    res
-      .status(404)
-      .json({
-        errorMessage: 'Please provide title and contents for the post.',
-      });
+    res.status(404).json({
+      errorMessage: 'Please provide title and contents for the post.',
+    });
+  }
+});
+
+// UPDATE A POST
+routes.put(postIdUrl, async (req, res) => {
+  const { id } = req.params;
+  const post = {
+    ...req.body,
+    updated_at: moment()
+      .format()
+      .replace(/T/g, ' ')
+      .slice(0, -6),
+  };
+  const { title } = req.body;
+  const { contents } = req.body;
+  if (title && contents) {
+    try {
+      const updatedPost = await db.update(id, post);
+      if (updatedPost) {
+        try {
+          const post = await db.findById(id);
+          res.status(200).json(post);
+        } catch {
+          res.status(404).json({
+            message: 'The post with the specified ID does not exist.',
+          });
+        }
+      } else {
+        res
+          .status(404)
+          .json({ message: 'The post with the specified ID does not exist.' });
+      }
+    } catch (error) {
+      res
+        .status(500)
+        .json({ error: 'The post information could not be modified.' });
+    }
+  } else {
+    res.status(400).json({
+      errorMessage: 'Please provide title and contents for the post.',
+    });
   }
 });
 
