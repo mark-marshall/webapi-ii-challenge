@@ -64,4 +64,29 @@ routes.delete(postIdUrl, async (req, res) => {
   }
 });
 
+// ADD A POST
+routes.post(postUrl, async (req, res) => {
+  const { title } = req.body;
+  const { contents } = req.body;
+  if (title && contents) {
+    try {
+      await db.insert({
+        title,
+        contents,
+      });
+      res.status(201).json(req.body);
+    } catch (error) {
+      res.status(500).json({
+        error: 'There was an error while saving the post to the database',
+      });
+    }
+  } else {
+    res
+      .status(404)
+      .json({
+        errorMessage: 'Please provide title and contents for the post.',
+      });
+  }
+});
+
 module.exports = routes;
