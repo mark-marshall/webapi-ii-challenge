@@ -8,7 +8,6 @@ const postUrl = '/api/posts';
 const postIdUrl = '/api/posts/:id';
 
 routes.use(express.json());
-routes.use(cors());
 
 // GET ALL POSTS
 routes.get(postUrl, async (req, res) => {
