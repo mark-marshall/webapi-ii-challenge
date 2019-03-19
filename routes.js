@@ -1,13 +1,14 @@
-const moment = require('moment');
-
 const express = require('express');
 const routes = express.Router();
+const moment = require('moment');
+
 const db = require('./data/db');
 
 const postUrl = '/api/posts';
 const postIdUrl = '/api/posts/:id';
 
 routes.use(express.json());
+routes.use(cors());
 
 // GET ALL POSTS
 routes.get(postUrl, async (req, res) => {
@@ -96,7 +97,7 @@ routes.put(postIdUrl, async (req, res) => {
     ...req.body,
     updated_at: moment()
       .format()
-      .replace(/T/g, ' ')
+      .replace(/T/g,' ')
       .slice(0, -6),
   };
   const { title } = req.body;
