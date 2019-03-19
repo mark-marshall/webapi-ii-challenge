@@ -40,4 +40,28 @@ routes.get(postIdUrl, async (req, res) => {
   }
 });
 
+// DELETE A SPECIFIC POST
+routes.delete(postIdUrl, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const post = await db.findById(id);
+    if (post.length > 0) {
+      try {
+        await db.remove(id);
+        res.status(200).json(post);
+      } catch {
+        res
+          .status(404)
+          .json({ message: 'The post with the specified ID does not exist.' });
+      }
+    } else {
+      res
+        .status(404)
+        .json({ message: 'The post with the specified ID does not exist.' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'The post could not be removed' });
+  }
+});
+
 module.exports = routes;
